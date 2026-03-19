@@ -1,0 +1,130 @@
+/* =====================================================
+   SSVVS — Global Design System
+   Theme: Industrial-precision government tech
+   Fonts: Syne (display) + IBM Plex Mono (data) + Inter (body)
+   Palette: Deep navy + amber accent + cool greys
+   ===================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Core palette */
+  --bg-base:       #070b14;
+  --bg-surface:    #0d1424;
+  --bg-raised:     #111c2e;
+  --bg-elevated:   #162038;
+  --border:        #1e2d45;
+  --border-accent: #2a4060;
+
+  /* Text */
+  --text-primary:   #e8edf5;
+  --text-secondary: #8a9bb5;
+  --text-muted:     #4a5a72;
+  --text-mono:      #6fc3df;
+
+  /* Accent — amber/gold for government authority */
+  --accent:        #f5a623;
+  --accent-dim:    #b87318;
+  --accent-glow:   rgba(245, 166, 35, 0.15);
+
+  /* Status colours */
+  --green:         #22d383;
+  --green-dim:     rgba(34, 211, 131, 0.12);
+  --red:           #ff4d5e;
+  --red-dim:       rgba(255, 77, 94, 0.12);
+  --yellow:        #ffc947;
+  --yellow-dim:    rgba(255, 201, 71, 0.12);
+  --blue:          #4da6ff;
+  --blue-dim:      rgba(77, 166, 255, 0.12);
+
+  /* Layout */
+  --sidebar-w:     260px;
+  --topbar-h:      56px;
+  --radius:        6px;
+  --radius-lg:     12px;
+
+  /* Fonts */
+  --font-display: 'Syne', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+  --font-body:    'Inter', sans-serif;
+
+  /* Shadows */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:   0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,0.6);
+  --shadow-glow: 0 0 24px rgba(245, 166, 35, 0.2);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Global link reset */
+a { color: inherit; text-decoration: none; }
+
+/* Button reset */
+button { cursor: pointer; font-family: inherit; }
+
+/* Utility classes */
+.mono { font-family: var(--font-mono); }
+.display { font-family: var(--font-display); }
+
+/* Animated scan line effect for the whole app */
+@keyframes scanline {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100vh; }
+}
+
+/* Page transition */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up { animation: fadeUp 0.35s ease forwards; }
+
+/* Pulse dot */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Shimmer skeleton */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-raised) 50%, var(--bg-surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius);
+}
+
+/* Scan animation for verification */
+@keyframes scan-beam {
+  0%   { top: 0%; }
+  50%  { top: 100%; }
+  100% { top: 0%; }
+}

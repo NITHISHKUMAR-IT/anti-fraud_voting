@@ -1,0 +1,204 @@
+.shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brandIcon {
+  font-size: 28px;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.brandTitle {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--text-primary);
+}
+
+.brandSub {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.boothTag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-mono);
+  letter-spacing: 0.08em;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.nav {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.navItem:hover {
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.navItemActive {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border-color: rgba(245, 166, 35, 0.3);
+}
+
+.navItemActive .navIcon {
+  color: var(--accent);
+}
+
+.navIcon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.navItemActive .navIcon {
+  opacity: 1;
+}
+
+.sidebarFooter {
+  border-top: 1px solid var(--border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.officerCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  background: var(--bg-raised);
+  border-radius: var(--radius);
+}
+
+.officerAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-dim), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.officerInfo { min-width: 0; }
+
+.officerName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.officerBadge {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.logoutBtn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 7px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.logoutBtn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-dim);
+}
+
+/* ---- Main ---- */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg-base);
+}
+
+.content {
+  padding: 28px 32px;
+  max-width: 1200px;
+  animation: fadeUp 0.3s ease forwards;
+}

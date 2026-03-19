@@ -1,0 +1,144 @@
+.loadingGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.clock { text-align: right; }
+
+.clockTime {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-mono);
+  letter-spacing: 0.05em;
+}
+
+.clockDate {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.alertBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: 24px;
+}
+
+.alertPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sev_critical { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,77,94,0.3); }
+.sev_high     { background: rgba(255,100,60,0.12); color: #ff6430; border: 1px solid rgba(255,100,60,0.3); }
+.sev_medium   { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(255,201,71,0.3); }
+.sev_low      { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(77,166,255,0.25); }
+
+.alertCount {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.alertClear {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.alertDot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.chartPanel, .logsPanel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.panelHeader {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.logsList { display: flex; flex-direction: column; gap: 8px; }
+
+.logRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--bg-raised);
+  border-radius: var(--radius);
+  gap: 8px;
+}
+
+.logLeft { display: flex; align-items: center; gap: 8px; min-width: 0; }
+
+.logAction {
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logRight { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.logVoter {
+  font-size: 10px;
+  color: var(--text-mono);
+  background: var(--bg-elevated);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.logTime {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.logsEmpty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 24px 0;
+}

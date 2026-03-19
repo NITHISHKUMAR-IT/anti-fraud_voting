@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ssvvs_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: voting_user
+      POSTGRES_PASSWORD: voting_pass
+      POSTGRES_DB: voting_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voting_user -d voting_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ssvvs_backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://voting_user:voting_pass@db:5432/voting_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - /tmp/ssvvs_uploads:/tmp/ssvvs_uploads
+
+  frontend:
+    image: node:20-alpine
+    container_name: ssvvs_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev -- --host"
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  pg_data:

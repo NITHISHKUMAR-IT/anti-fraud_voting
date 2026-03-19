@@ -1,0 +1,65 @@
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  border-radius: 3px 0 0 3px;
+}
+
+.card:hover { border-color: var(--border-accent); }
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.icon {
+  font-size: 18px;
+  opacity: 0.5;
+}
+
+.value {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Colour variants - left accent bar */
+.default::before { background: var(--border-accent); }
+.green::before   { background: var(--green); }
+.green .value    { color: var(--green); }
+.red::before     { background: var(--red); }
+.red .value      { color: var(--red); }
+.amber::before   { background: var(--accent); }
+.amber .value    { color: var(--accent); }
+.blue::before    { background: var(--blue); }
+.blue .value     { color: var(--blue); }

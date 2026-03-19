@@ -1,0 +1,18 @@
+.searchInput {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  outline: none;
+  min-width: 220px;
+  transition: border-color 0.15s;
+}
+
+.searchInput:focus {
+  border-color: var(--accent);
+}
+
+.searchInput::placeholder { color: var(--text-muted); }
