@@ -1,6 +1,7 @@
 import logging
 import uuid
-from datetime import datetime, timezone
+import random
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from sqlalchemy import select
@@ -66,3 +67,47 @@ async def get_booth_stats(db: AsyncSession, booth_id: str) -> dict:
         "pending": total - voted,
         "turnout_percent": round((voted / total * 100), 2) if total > 0 else 0.0,
     }
+
+
+async def get_officer_by_phone(db: AsyncSession, phone_number: str) -> Optional[PollingOfficer]:
+    result = await db.execute(
+        select(PollingOfficer).where(PollingOfficer.phone == phone_number)
+    )
+    return result.scalar_one_or_none()
+
+
+def generate_otp() -> str:
+    """Generate a 6-digit OTP"""
+    return str(random.randint(100000, 999999))
+
+
+async def generate_and_store_otp(db: AsyncSession, officer: PollingOfficer, otp_expiry_minutes: int = 5) -> str:
+    """Generate OTP and store it in the database"""
+    otp = generate_otp()
+    officer.otp = otp
+    officer.otp_expires = datetime.now(timezone.utc) + timedelta(minutes=otp_expiry_minutes)
+    await db.flush()
+    logger.info(f"OTP generated for officer: {officer.badge_number}")
+    # In production, send OTP via SMS to officer.phone
+    return otp
+
+
+async def verify_otp(db: AsyncSession, officer: PollingOfficer, otp: str) -> bool:
+    """Verify OTP and return True if valid"""
+    if not officer.otp or not officer.otp_expires:
+        return False
+    
+    if datetime.now(timezone.utc) > officer.otp_expires:
+        logger.warning(f"OTP expired for officer: {officer.badge_number}")
+        return False
+    
+    if officer.otp != otp:
+        logger.warning(f"Invalid OTP attempt for officer: {officer.badge_number}")
+        return False
+    
+    # Clear OTP after successful verification
+    officer.otp = None
+    officer.otp_expires = None
+    await db.flush()
+    logger.info(f"OTP verified for officer: {officer.badge_number}")
+    return True

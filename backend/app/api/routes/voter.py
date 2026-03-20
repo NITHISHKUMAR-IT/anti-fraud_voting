@@ -1,9 +1,10 @@
 """
 Voter routes
+- POST /api/v1/voters/login/otp/request  - Request OTP
+- POST /api/v1/voters/login/otp/verify   - Verify OTP and get token
 - POST /api/v1/voters/         - Register a voter
 - GET  /api/v1/voters/{id}     - Get voter info
 - GET  /api/v1/voters/         - List voters (officer only)
-- POST /api/v1/voters/login    - Officer login → JWT
 - GET  /api/v1/voters/stats/{booth_id} - Booth-level turnout
 """
 import logging
@@ -14,11 +15,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_officer
-from app.core.security import create_access_token, verify_password
+from app.core.security import create_access_token
 from app.db.session import get_db
 from app.models.voter import PollingOfficer
 from app.schemas.voter import (
-    OfficerLoginRequest,
+    OfficerOTPRequest,
+    OfficerOTPVerifyRequest,
+    OTPResponse,
     OfficerTokenResponse,
     VoterCreate,
     VoterResponse,
@@ -30,22 +33,56 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/login", response_model=OfficerTokenResponse, summary="Officer login")
-async def officer_login(payload: OfficerLoginRequest, db: AsyncSession = Depends(get_db)):
-    officer = await voter_service.get_officer_by_badge(db, payload.badge_number)
-    if not officer or not verify_password(payload.password, officer.hashed_password):
+@router.post("/login/otp/request", response_model=OTPResponse, summary="Request OTP")
+async def request_otp(payload: OfficerOTPRequest, db: AsyncSession = Depends(get_db)):
+    """Request OTP to be sent to officer's phone"""
+    officer = await voter_service.get_officer_by_phone(db, payload.phone_number)
+    if not officer:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid badge number or password.",
+            detail="Phone number not registered.",
         )
     if not officer.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is inactive.")
 
+    otp = await voter_service.generate_and_store_otp(db, officer)
+    await db.commit()
+    
+    # In production, send OTP via SMS here
+    # For demo, OTP is generated and stored in database
+    logger.info(f"OTP requested for phone: {payload.phone_number}")
+    
+    return OTPResponse(
+        message=f"OTP sent to {payload.phone_number}. For demo, OTP is: {otp}",
+        phone_number=payload.phone_number,
+    )
+
+
+@router.post("/login/otp/verify", response_model=OfficerTokenResponse, summary="Verify OTP and login")
+async def verify_otp(payload: OfficerOTPVerifyRequest, db: AsyncSession = Depends(get_db)):
+    """Verify OTP and return authentication token"""
+    officer = await voter_service.get_officer_by_phone(db, payload.phone_number)
+    if not officer:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Phone number not found.",
+        )
+    if not officer.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is inactive.")
+
+    # Verify OTP
+    if not await voter_service.verify_otp(db, officer, payload.otp):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired OTP.",
+        )
+
     officer.last_login = datetime.now(timezone.utc)
-    await db.flush()
+    await db.commit()
 
     token = create_access_token(subject=officer.badge_number)
-    logger.info("Officer logged in: badge=%s", officer.badge_number)
+    logger.info(f"Officer logged in via OTP: badge={officer.badge_number}")
+    
     return OfficerTokenResponse(
         access_token=token,
         officer_name=officer.name,

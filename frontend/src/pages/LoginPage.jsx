@@ -6,20 +6,37 @@ import styles from './LoginPage.module.css'
 export default function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const [badge, setBadge] = useState('')
-  const [password, setPassword] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [otp, setOtp] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState('phone') // 'phone' or 'otp'
+  const [otpMessage, setOtpMessage] = useState('')
 
-  const handleSubmit = async (e) => {
+  const handleRequestOTP = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
     try {
-      await login(badge, password)
+      await login(phoneNumber, 'request-otp')
+      setStep('otp')
+      setOtpMessage('OTP sent to your phone number')
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Failed to request OTP')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+    try {
+      await login(phoneNumber, otp)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed. Check credentials.')
+      setError(err.response?.data?.detail || 'Invalid OTP. Try again.')
     } finally {
       setLoading(false)
     }
@@ -44,49 +61,89 @@ export default function LoginPage() {
         <h2 className={styles.heading}>Officer Authentication</h2>
         <p className={styles.hint}>Access restricted to authorised polling personnel</p>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.field}>
-            <label className={styles.label}>Badge Number</label>
-            <input
-              className={styles.input}
-              type="text"
-              placeholder="e.g. ADMIN-001"
-              value={badge}
-              onChange={(e) => setBadge(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
+        {step === 'phone' ? (
+          <form onSubmit={handleRequestOTP} className={styles.form}>
+            <div className={styles.field}>
+              <label className={styles.label}>Phone Number</label>
+              <input
+                className={styles.input}
+                type="tel"
+                placeholder="e.g. +91 9876543210"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
 
-          <div className={styles.field}>
-            <label className={styles.label}>Password</label>
-            <input
-              className={styles.input}
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+            {error && <div className={styles.error}>{error}</div>}
 
-          {error && <div className={styles.error}>{error}</div>}
+            <button
+              className={styles.submitBtn}
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className={styles.spinner} />
+              ) : (
+                <>
+                  <span>Request OTP</span>
+                  <span className={styles.arrow}>→</span>
+                </>
+              )}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOTP} className={styles.form}>
+            <div className={styles.otpInfo}>
+              <p>{otpMessage}</p>
+              <p className={styles.phoneDisplay}>{phoneNumber}</p>
+            </div>
 
-          <button
-            className={styles.submitBtn}
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? (
-              <span className={styles.spinner} />
-            ) : (
-              <>
-                <span>Authenticate</span>
-                <span className={styles.arrow}>→</span>
-              </>
-            )}
-          </button>
-        </form>
+            <div className={styles.field}>
+              <label className={styles.label}>Enter OTP</label>
+              <input
+                className={styles.input}
+                type="text"
+                placeholder="000000"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                required
+                autoFocus
+                maxLength="6"
+              />
+            </div>
+
+            {error && <div className={styles.error}>{error}</div>}
+
+            <button
+              className={styles.submitBtn}
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className={styles.spinner} />
+              ) : (
+                <>
+                  <span>Verify OTP</span>
+                  <span className={styles.arrow}>→</span>
+                </>
+              )}
+            </button>
+
+            <button
+              className={styles.backBtn}
+              type="button"
+              onClick={() => {
+                setStep('phone')
+                setError('')
+                setOtp('')
+              }}
+            >
+              ← Back
+            </button>
+          </form>
+        )}
 
         <div className={styles.footer}>
           <span className={styles.footerDot} />

@@ -48,7 +48,10 @@ class PollingOfficer(Base):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     badge_number: Mapped[str] = mapped_column(String(30), unique=True, nullable=False, index=True)
     booth_id: Mapped[str] = mapped_column(String(30), nullable=False)
+    phone: Mapped[str] = mapped_column(String(15), nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(Text, nullable=False)
+    otp: Mapped[str | None] = mapped_column(String(6), nullable=True)
+    otp_expires: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     last_login: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(

@@ -39,7 +39,22 @@ class VoterStatusResponse(BaseModel):
 
 class OfficerLoginRequest(BaseModel):
     badge_number: str
-    password: str
+    password: Optional[str] = None
+
+
+class OfficerOTPRequest(BaseModel):
+    phone_number: str
+    badge_number: Optional[str] = None
+
+
+class OfficerOTPVerifyRequest(BaseModel):
+    phone_number: str
+    otp: str
+
+
+class OTPResponse(BaseModel):
+    message: str
+    phone_number: str
 
 
 class OfficerTokenResponse(BaseModel):

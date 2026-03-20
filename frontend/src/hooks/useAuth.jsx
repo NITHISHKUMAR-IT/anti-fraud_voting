@@ -10,10 +10,10 @@ export function AuthProvider({ children }) {
     return raw ? JSON.parse(raw) : null
   })
 
-  const login = useCallback(async (badgeNumber, password) => {
+  const login = useCallback(async (badgeNumber, password = '') => {
     const res = await api.post('/api/v1/voters/login', {
       badge_number: badgeNumber,
-      password,
+      password: password || '',
     })
     const { access_token, officer_name, booth_id } = res.data
     const officerData = { name: officer_name, boothId: booth_id, badge: badgeNumber }
